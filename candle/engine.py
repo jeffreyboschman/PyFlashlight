@@ -16,7 +16,7 @@ class Value:
 
     def __repr__(self):
         """Returns a printable representation of the given Value object."""
-        return f"Value(data={self.data})"
+        return f"Value(data={self.data}, label={self.label})"
 
 
     def __add__(self, other: Union["Value", float, int]): 
