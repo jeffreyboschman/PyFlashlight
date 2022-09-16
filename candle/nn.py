@@ -2,7 +2,6 @@ import random
 from candle.engine import Value
 
 class Module:
-
     def zero_grad(self):
         for p in self.parameters():
             p.grad = 0
@@ -28,7 +27,7 @@ class Neuron(Module):
     def parameters(self):
         return self.w + [self.b]
 
-class Layer:
+class Layer(Module):
     def __init__(self, nin, nout, layer_num): 
         self.neurons = [Neuron(nin, layer_num, neuron_num) for neuron_num, _ in enumerate(range(nout))]
 
@@ -44,7 +43,7 @@ class Layer:
         return params
         #return [p for n in self.neurons for p in n.parameters()]
 
-class MLP:
+class MLP(Module):
     def __init__(self, nin, nouts):
         sz = [nin] + nouts
         self.layers = [Layer(sz[i], sz[i+1], layer_num) for layer_num, i in enumerate(range(len(nouts)))]
@@ -61,5 +60,3 @@ class MLP:
             params.extend(ps)
         return params
         #return [p for n in self.neurons for p in n.parameters()]
-
-        
