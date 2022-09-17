@@ -1,5 +1,5 @@
 import random
-from candle.engine import Value
+from candle.engine import Scalar
 
 class Module:
     def zero_grad(self):
@@ -13,8 +13,8 @@ class Neuron(Module):
     def __init__(self, nin, layer_num = 0, neuron_num = 0):
         self.n = neuron_num
         self.l = layer_num
-        self.w = [Value(random.uniform(-1, 1), label=f"L{self.l}w{prev_layer_neuron_num}-\>L{self.l+1}w{self.n}") for prev_layer_neuron_num, _ in enumerate(range(nin))]
-        self.b = Value(random.uniform(-1,1), label = f"L{self.l+1}b{self.n}")
+        self.w = [Scalar(random.uniform(-1, 1), label=f"L{self.l}w{prev_layer_neuron_num}-\>L{self.l+1}w{self.n}") for prev_layer_neuron_num, _ in enumerate(range(nin))]
+        self.b = Scalar(random.uniform(-1,1), label = f"L{self.l+1}b{self.n}")
     
     def __call__(self, x):
         # w*x + b

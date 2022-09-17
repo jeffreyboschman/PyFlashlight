@@ -3,8 +3,8 @@ from this import d
 from typing import Union, Tuple, List, Set, Callable
 
 
-class Value:
-    def __init__(self, data: Union[float, int], _children: Tuple["Value", ...]=(), _op: str="", label: str = "") -> None:
+class Scalar:
+    def __init__(self, data: Union[float, int], _children: Tuple["Scalar", ...]=(), _op: str="", label: str = "") -> None:
         """Initializes a scalar with its data."""
         self.data = float(data)
         self.grad = 0.0
@@ -16,17 +16,17 @@ class Value:
 
 
     def __repr__(self):
-        """Returns a printable representation of the given Value object."""
+        """Returns a printable representation of the given Scalar object."""
         if self.label:
-            return f"Value(data={self.data}, label={self.label})"
+            return f"Scalar(data={self.data}, label={self.label})"
         else:
-            return f"Value(data={self.data})"
+            return f"Scalar(data={self.data})"
 
 
-    def __add__(self, other: Union["Value", float, int]): 
-        """Adds two Value objects (or a Value object with a Python int/float). e.g., self + other"""
-        _other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.data + _other.data, _children = (self, _other), _op = "+")
+    def __add__(self, other: Union["Scalar", float, int]): 
+        """Adds two Scalar objects (or a Scalar object with a Python int/float). e.g., self + other"""
+        _other = other if isinstance(other, Scalar) else Scalar(other)
+        out = Scalar(self.data + _other.data, _children = (self, _other), _op = "+")
 
         def _backward() -> None:
             """Going backwards through the computation graph, calculates the deriviates of the final node w.r.t. self and other (for this addition operation).
@@ -39,10 +39,10 @@ class Value:
 
         return out
 
-    def __mul__(self, other: Union["Value", float, int]):
-        """Multiplies two Value objects (or a Value object with a Python int/float). e.g., self * other"""
-        _other = other if isinstance(other, Value) else Value(other)
-        out = Value(self.data * _other.data, _children = (self, _other), _op = "*")
+    def __mul__(self, other: Union["Scalar", float, int]):
+        """Multiplies two Scalar objects (or a Scalar object with a Python int/float). e.g., self * other"""
+        _other = other if isinstance(other, Scalar) else Scalar(other)
+        out = Scalar(self.data * _other.data, _children = (self, _other), _op = "*")
 
         def _backward() -> None:
             """Going backwards through the computation graph, calculates the deriviates of the final node w.r.t. self and other (for this multiplication operation).""" 
@@ -53,10 +53,10 @@ class Value:
         return out
 
     def __pow__(self, other: Union[float, int]):
-        """The derivative expression would be different if we the power was another Value object. (it would be like x^y instead of x^2)"""
+        """The derivative expression would be different if we the power was another Scalar object. (it would be like x^y instead of x^2)"""
         assert isinstance(other, (float, int))
         _other = other
-        out = Value(self.data ** _other, _children = (self,), _op = f"**{_other}")
+        out = Scalar(self.data ** _other, _children = (self,), _op = f"**{_other}")
 
         def _backward() -> None:
             """Going backwards through the computation graph, calculates the deriviates of the final node w.r.t. self and other (for this multiplication operation).""" 
@@ -74,14 +74,14 @@ class Value:
     def __rsub__(self, other): # other - self
         return other + (-self)
     
-    def __truediv__(self, other: Union["Value", float, int]):
+    def __truediv__(self, other: Union["Scalar", float, int]):
         return self * other**(-1)
 
 
 
     def exp(self):
         x = self.data
-        out = Value(math.exp(x), (self, ), _op = 'exp')
+        out = Scalar(math.exp(x), (self, ), _op = 'exp')
 
         def _backward() -> None:
             self.grad += out.data * out.grad    # local derivative of exp: d(out)/d(self) = 
@@ -92,7 +92,7 @@ class Value:
     def tanh(self):
         x = self.data
         tanh_x = (math.exp(2*x) - 1)/(math.exp(2*x) + 1) 
-        out = Value(tanh_x, _children = (self, ), _op = "tanh")
+        out = Scalar(tanh_x, _children = (self, ), _op = "tanh")
 
         def _backward() -> None:
             self.grad += (1 - tanh_x**2) * out.grad    # local derivative of tanh: d(out)/d(self) = 1 - tanh(selsf)^2
@@ -118,36 +118,36 @@ class Value:
         for v in reversed(topo):
             v._backward()
 
-    def __radd__(self, other: Union["Value", float, int]):
-        """Adds a Python int/float with a Value object. e.g., other + self
+    def __radd__(self, other: Union["Scalar", float, int]):
+        """Adds a Python int/float with a Scalar object. e.g., other + self
 
-        Without this method, if a command were `a = 2 + Value(3)`, a TypeError would occur 
-        because Python does not know what to do with 2.__add__(Value(3))."""
+        Without this method, if a command were `a = 2 + Scalar(3)`, a TypeError would occur 
+        because Python does not know what to do with 2.__add__(Scalar(3))."""
         return self + other
 
-    def __rmul__(self, other: Union["Value", float, int]):
-        """Multiplies a Python int/float with a Value object. e.g., other * self
+    def __rmul__(self, other: Union["Scalar", float, int]):
+        """Multiplies a Python int/float with a Scalar object. e.g., other * self
 
-        Without this method, if a command were `a = 2 * Value(3)`, a TypeError would occur 
-        because Python does not know what to do with 2.__mul__(Value(3))."""
+        Without this method, if a command were `a = 2 * Scalar(3)`, a TypeError would occur 
+        because Python does not know what to do with 2.__mul__(Scalar(3))."""
         return self * other
 
 
 class Vector:
-    def __init__(self, vector, label: str = ""):
-        self.vector = [Value(item) for item in vector]
+    def __init__(self, scalars, label: str = ""):
+        self.scalars = [Scalar(item) for item in scalars]
         if label:
-            for idx, value in enumerate(self.vector):
-                value.label = f"{label}{idx}"
+            for idx, scalar in enumerate(self.scalars):
+                scalar.label = f"{label}{idx}"
     
     def __repr__(self):
-        """Returns a printable representation of the given Value object."""
-        return f"Vector({self.vector})"
+        """Returns a printable representation of the given Scalar object."""
+        return f"Vector({self.scalars})"
     
     def __getitem__(self, idx):
         if idx >= len(self):
             raise IndexError("Vector index out of range")
-        return self.vector[idx]
+        return self.scalars[idx]
 
     def __len__(self):
-        return len(self.vector)
+        return len(self.scalars)
