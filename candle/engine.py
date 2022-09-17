@@ -1,4 +1,5 @@
 import math
+from this import d
 from typing import Union, Tuple, List, Set, Callable
 
 
@@ -16,7 +17,10 @@ class Value:
 
     def __repr__(self):
         """Returns a printable representation of the given Value object."""
-        return f"Value(data={self.data}, label={self.label})"
+        if self.label:
+            return f"Value(data={self.data}, label={self.label})"
+        else:
+            return f"Value(data={self.data})"
 
 
     def __add__(self, other: Union["Value", float, int]): 
@@ -114,16 +118,12 @@ class Value:
         for v in reversed(topo):
             v._backward()
 
-
-
-
     def __radd__(self, other: Union["Value", float, int]):
         """Adds a Python int/float with a Value object. e.g., other + self
 
         Without this method, if a command were `a = 2 + Value(3)`, a TypeError would occur 
         because Python does not know what to do with 2.__add__(Value(3))."""
         return self + other
-
 
     def __rmul__(self, other: Union["Value", float, int]):
         """Multiplies a Python int/float with a Value object. e.g., other * self
@@ -133,3 +133,21 @@ class Value:
         return self * other
 
 
+class Vector:
+    def __init__(self, vector, label: str = ""):
+        self.vector = [Value(item) for item in vector]
+        if label:
+            for idx, value in enumerate(self.vector):
+                value.label = f"{label}{idx}"
+    
+    def __repr__(self):
+        """Returns a printable representation of the given Value object."""
+        return f"Vector({self.vector})"
+    
+    def __getitem__(self, idx):
+        if idx >= len(self):
+            raise IndexError("Vector index out of range")
+        return self.vector[idx]
+
+    def __len__(self):
+        return len(self.vector)

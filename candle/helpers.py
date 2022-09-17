@@ -1,4 +1,5 @@
 from graphviz import Digraph
+from candle.engine import Value
 
 def trace(root):
     # builds a set of all nodes and edges in a graph
