@@ -18,6 +18,9 @@ loss = losses.mean_squared_error(y_preds, y)
 helpers.draw_dot(loss)
 ```
 
+![alt text](https://github.com/jeffreyboschman/PyCandle/blob/main/images/mlp_no_grads.svg?raw=true)
+
+
 Next, we can perform backpropagation, which calculates the gradient of each graph node, a, relative to the loss, l (dl/da). It calculates the gradient whether or not it is a parameter, as all are useful in calculating the relevant parameter gradients.
 
 ```
@@ -25,6 +28,7 @@ loss.backward()
 helpers.draw_dot(loss)
 ```
 
+![alt text](https://github.com/jeffreyboschman/PyCandle/blob/main/images/mlp_with_grads.svg?raw=true)
 
 ## References
 
