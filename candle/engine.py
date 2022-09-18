@@ -1,7 +1,12 @@
+"""
+Lightweight version of PyTorch's autograd engine for backpropagation (not optimized for efficiency; mainly just for educational purposes to see how gradients are calculatd and stored)
+
+Heavily inspired by https://github.com/karpathy/micrograd/blob/master/micrograd/engine.py, but with a bit more functionality (e.g., extension to vectors) and a lot more documentation.
+"""
+
 import math
 from this import d
 from typing import Union, Tuple, List, Set, Callable
-
 
 class Scalar:
     def __init__(self, data: Union[float, int], _children: Tuple["Scalar", ...]=(), _op: str="", label: str = "") -> None:
@@ -13,7 +18,6 @@ class Scalar:
         self._prev = set(_children)
         self._op = _op
         self._backward = lambda: None
-
 
     def __repr__(self):
         """Returns a printable representation of the given Scalar object."""
@@ -76,8 +80,6 @@ class Scalar:
     
     def __truediv__(self, other: Union["Scalar", float, int]):
         return self * other**(-1)
-
-
 
     def exp(self):
         x = self.data

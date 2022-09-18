@@ -1,3 +1,7 @@
+""" 
+Helper functions.
+"""
+
 from graphviz import Digraph
 
 def trace(root):

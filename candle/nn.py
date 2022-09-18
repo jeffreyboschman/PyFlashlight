@@ -1,3 +1,9 @@
+"""
+Lightweight version of torch.nn; the basic building blocks of neural network graphs. 
+
+Heavily inspired by https://github.com/karpathy/micrograd/blob/master/micrograd/nn.py, but with a bit more functionality (e.g., extension to vectors) and a lot more documentation.
+"""
+
 import random
 from candle.engine import Scalar
 
@@ -33,7 +39,8 @@ class Layer(Module):
 
     def __call__(self, x):
         outs = [n(x) for n in self.neurons]
-        return outs[0] if len(outs) == 1 else outs
+        #return outs[0] if len(outs) == 1 else outs
+        return outs
 
     def parameters(self):
         params = []
