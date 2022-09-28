@@ -91,6 +91,27 @@ class Scalar:
 
         return out
 
+    def log(self):
+        x = self.data
+        out = Scalar(math.log(x), (self, ), _op = 'log')
+
+        def _backward() -> None:
+            self.grad += (1/out.data) * out.grad    # local derivative of exp: d(out)/d(self) = 
+        out._backward = _backward
+
+        return out
+
+    def sigmoid(self):
+        x = self.data
+        sigmoid_x = (1 / (1 + math.exp(-x)))
+        out = Scalar(sigmoid_x, _children = (self, ), _op = "sigmoid")
+
+        def _backward() -> None:
+            self.grad += (sigmoid_x * (1 - sigmoid_x)) * out.grad    # local derivative of tanh: d(out)/d(self) = 1 - tanh(selsf)^2
+        out._backward = _backward
+
+        return out
+
     def tanh(self):
         x = self.data
         tanh_x = (math.exp(2*x) - 1)/(math.exp(2*x) + 1) 
