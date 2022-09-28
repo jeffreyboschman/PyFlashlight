@@ -26,7 +26,7 @@ class Neuron(Module):
         # w*x + b
         z = sum((xi*wi for wi, xi in zip(self.w, x)), self.b)
         z.label = f"L{self.l+1}z{self.n}"
-        out = z.tanh()
+        out = z.relu()
         out.label = f"L{self.l+1}a{self.n}"
         return out
 
