@@ -16,7 +16,7 @@ def trace(root):
     build(root)
     return nodes, edges
 
-def draw_dot(root, format='svg', rankdir='LR'):
+def draw_dot(root, parameters, format='svg', rankdir='LR'):
     """
     format: png | svg | ...
     rankdir: TB (top to bottom graph) | LR (left to right)
@@ -27,7 +27,16 @@ def draw_dot(root, format='svg', rankdir='LR'):
     
     for n in nodes:
         # for any Scalar in the graph, create a rectangular ('record') node for it
-        dot.node(name=str(id(n)), label = "{ %s | data %.4f | grad %.4f }" % (n.label, n.data, n.grad), shape='record')
+        if n in parameters:
+            c = 'red'
+            s = ''
+        elif n.grad == 0.0:
+            c = 'grey'
+            s = 'filled'
+        else:
+            c = 'black'
+            s = ''
+        dot.node(name=str(id(n)), label = "{ %s | data %.4f | grad %.4f }" % (n.label, n.data, n.grad), shape='record', color=c, style=s)
         #dot.node(name=str(id(n)), label = "{ data %.4f | grad}" % (n.data), shape='record')
 
         if n._op:
@@ -40,3 +49,8 @@ def draw_dot(root, format='svg', rankdir='LR'):
         dot.edge(str(id(n1)), str(id(n2)) + n2._op)
     
     return dot
+
+def softmax(layer):
+    sums = sum(neuron.exp() for neuron in layer)
+    out = [neuron.exp()/sums for neuron in layer] 
+    return out
