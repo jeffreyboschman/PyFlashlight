@@ -107,7 +107,7 @@ class Scalar:
         out = Scalar(sigmoid_x, _children = (self, ), _op = "sigmoid")
 
         def _backward() -> None:
-            self.grad += (sigmoid_x * (1 - sigmoid_x)) * out.grad    # local derivative of tanh: d(out)/d(self) = 1 - tanh(selsf)^2
+            self.grad += (sigmoid_x * (1 - sigmoid_x)) * out.grad    # local derivative of tanh: d(out)/d(self) = 1 - tanh(self)^2
         out._backward = _backward
 
         return out
@@ -122,6 +122,19 @@ class Scalar:
         out._backward = _backward
 
         return out
+
+    def relu(self):
+        x = self.data
+        relu_x = max(x, 0)
+        out = Scalar(relu_x, _children = (self, ), _op = "relu")
+
+        def _backward() -> None:
+            local_grad = 1 if x > 0 else 0
+            self.grad += local_grad * out.grad    # local derivative of tanh: d(out)/d(self) = 1 if x > 0
+        out._backward = _backward
+
+        return out        
+        
 
     def backward(self):
         """Calculates the gradients of the final node (self) w.r.t. each node."""
