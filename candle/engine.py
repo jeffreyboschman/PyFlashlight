@@ -22,9 +22,9 @@ class Scalar:
     def __repr__(self):
         """Returns a printable representation of the given Scalar object."""
         if self.label:
-            return f"Scalar(data={self.data}, label={self.label})"
+            return f"Scalar(data={self.data}, grad={self.grad}, label={self.label})"
         else:
-            return f"Scalar(data={self.data})"
+            return f"Scalar(data={self.data}, grad={self.grad})"
 
 
     def __add__(self, other: Union["Scalar", float, int]): 
@@ -64,7 +64,7 @@ class Scalar:
 
         def _backward() -> None:
             """Going backwards through the computation graph, calculates the deriviates of the final node w.r.t. self and other (for this multiplication operation).""" 
-            self.grad += (_other * self.data**(_other -1)) * out.grad   # local derivative for multiplication: d(out)/d(self) = _other
+            self.grad += (_other * self.data**(_other - 1)) * out.grad   # local derivative for multiplication: d(out)/d(self) = _other
             #_other.grad += ???   # WHAT IS THIS
         out._backward = _backward
         return out
@@ -134,8 +134,19 @@ class Scalar:
         out._backward = _backward
 
         return out        
-        
 
+    def leakyrelu(self):
+        x = self.data
+        relu_x = x if x > 0 else x*0.01
+        out = Scalar(relu_x, _children = (self, ), _op = "leakyrelu")
+
+        def _backward() -> None:
+            local_grad = 1 if x > 0 else 0.01
+            self.grad += local_grad * out.grad    # local derivative of tanh: d(out)/d(self) = 1 if x > 0
+        out._backward = _backward
+
+        return out  
+        
     def backward(self):
         """Calculates the gradients of the final node (self) w.r.t. each node."""
         # topological order all of the children in the graph
