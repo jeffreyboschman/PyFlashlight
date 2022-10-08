@@ -55,3 +55,8 @@ def softmax(layer):
     sums = sum(neuron.exp() for neuron in layer)
     out = [neuron.exp()/sums for neuron in layer]
     return out
+
+def is_nested_list(outer_list):
+    """Checks if you have a nested list (single level). 
+    Returns True if there are any instances of a list object within your original, outer list."""
+    return any(isinstance(obj, list) for obj in outer_list)
