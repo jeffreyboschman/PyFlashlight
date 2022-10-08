@@ -21,7 +21,7 @@ class Neuron(Module):
         self.l = layer_num
         self.w = [Scalar(random.uniform(-1, 1), label=f"L{self.l}w{prev_layer_neuron_num}-\>L{self.l+1}w{self.n}") for prev_layer_neuron_num, _ in enumerate(range(nin))]
         self.b = Scalar(random.uniform(-1,1), label = f"L{self.l+1}b{self.n}")
-        self.activ = activ
+        self.activ = activ.strip().lower()
     
     def __call__(self, x):
         # w*x + b
@@ -31,6 +31,8 @@ class Neuron(Module):
             out = z.tanh()
         elif self.activ == 'relu':
             out = z.relu()
+        elif self.activ == 'leakyrelu':
+            out = z.leakyrelu()
         elif self.activ == 'sigmoid':
             out = z.sigmoid()
         else:
@@ -47,8 +49,8 @@ class Layer(Module):
 
     def __call__(self, x):
         outs = [n(x) for n in self.neurons]
-        #return outs[0] if len(outs) == 1 else outs
-        return outs
+        return outs[0] if len(outs) == 1 else outs
+        #return outs
 
     def parameters(self):
         params = []
