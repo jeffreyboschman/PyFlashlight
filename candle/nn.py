@@ -10,7 +10,7 @@ from candle.engine import Scalar
 class Module:
     def zero_grad(self):
         for p in self.parameters():
-            p.grad = 0
+            p.grad = 0.0
 
     def parameters(self):
         return []
