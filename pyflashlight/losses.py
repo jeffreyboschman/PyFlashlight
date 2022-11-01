@@ -1,7 +1,7 @@
 """
 Loss functions.
 """
-import candle.helpers as helpers
+import pyflashlight.helpers as helpers
 
 def mean_squared_error(y_gts, y_preds):
     """Calculates the mean square error between ground truth valules and preicted valules.

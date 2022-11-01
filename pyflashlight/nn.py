@@ -5,7 +5,7 @@ Heavily inspired by https://github.com/karpathy/micrograd/blob/master/micrograd/
 """
 
 import random
-from candle.engine import Scalar
+from pyflashlight.engine import Scalar
 
 class Module:
     def zero_grad(self):
