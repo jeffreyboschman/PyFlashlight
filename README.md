@@ -1,10 +1,33 @@
 # PyFlashlight
 
-A lightweight library for gaining intuition on the inner workings of neural networks. Includes functions for visualizing a neural network graph (with operations, labels, values, and gradients) and building a multi-layer perceptron (and more soon!). 
+A library for gaining intuition on the inner workings of neural networks. PyFlashlight is a bit like a lightweight implementation of PyTorch with `autograd=True`, in the sense that it can _**chain together operations**_ to yield an error between the output and some ground truth, _**keep track of what operations have been done**_, and subsequently _**traverse backwards from the error**_.
 
-![cartoon image of snake holding flashlight](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/DALLE_PyFlashlight1.png?raw=true=10x10)
+PyFlashlight is especially helpful for understanding gradient descent by _**visualizing the operations, values, and gradients in a neural network graph**_. Includes functionality to perform backpropagation with most standard arithmetic operations, multiple loss functions, multiple actication functions, and pre-defined classes for building a multi-layer perceptron. 
+
+![cartoon image of snake holding flashlight](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/DALLE_PyFlashlight1.png?raw=true)
 Image created by text-to-image generator DALL-E (2022-10-09).  
 
+## Simple Operations Example
+
+Below are a few examples of operations that are possible with PyFlashlight and a visualization of them as a computation graph.
+
+```
+from pyflashlight.engine import Scalar
+import pyflashlight.helpers as helpers
+
+a = Scalar(-3.0, label='a')
+b = Scalar(2, label='b')
+c = 0.25*(a + b); c.label='c'
+d = (b * c).leakyrelu(); d.label='d'
+print(f'd = {d.data:.4f}') # the outcome of this forward pass
+
+d.backward()
+print(f'dd/da = {a.grad:.4f}') # the numerical value of dd/da
+print(f'dd/db = {b.grad:.4f}') # the numerical value of dd/db
+print(f'dd/dc = {c.grad:.4f}') # the numerical value of dd/dc
+helpers.draw_dot(d)
+```
+![alt text](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/simple_graph.svg?raw=true)
 
 ## Backpropagation Calculation and Visualization Example
 

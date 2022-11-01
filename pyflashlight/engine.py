@@ -74,9 +74,6 @@ class Scalar:
 
     def __sub__(self, other): # self - other
         return self + (-other)
-
-    def __rsub__(self, other): # other - self
-        return other + (-self)
     
     def __truediv__(self, other: Union["Scalar", float, int]):
         return self * other**(-1)
@@ -172,12 +169,18 @@ class Scalar:
         because Python does not know what to do with 2.__add__(Scalar(3))."""
         return self + other
 
+    def __rsub__(self, other): # other - self
+        return other + (-self)
+
     def __rmul__(self, other: Union["Scalar", float, int]):
         """Multiplies a Python int/float with a Scalar object. e.g., other * self
 
         Without this method, if a command were `a = 2 * Scalar(3)`, a TypeError would occur 
         because Python does not know what to do with 2.__mul__(Scalar(3))."""
         return self * other
+
+    def __rtruediv__(self, other): # other / self
+        return other * self**-1
 
 
 class Vector:
