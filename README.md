@@ -2,7 +2,7 @@
 
 A lightweight library for gaining intuition on the inner workings of neural networks. Includes functions for visualizing a neural network graph (with operations, labels, values, and gradients) and building a multi-layer perceptron (and more soon!). 
 
-![cartoon image of snake holding flashlight](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/DALLE_PyFlashlight1.png?raw=true=250x250)
+![cartoon image of snake holding flashlight](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/DALLE_PyFlashlight1.png?raw=true | width=10)
 Image created by text-to-image generator DALL-E (2022-10-09).  
 
 
