@@ -16,7 +16,7 @@ class Module:
         return []
 
 class Neuron(Module):
-    def __init__(self, nin, layer_num = 0, neuron_num = 0, activ='tanh'):
+    def __init__(self, nin, layer_num = 0, neuron_num = 0, activ='leakyrelu'):
         self.n = neuron_num
         self.l = layer_num
         self.w = [Scalar(random.uniform(-1, 1), label=f"L{self.l}w{prev_layer_neuron_num}-\>L{self.l+1}w{self.n}") for prev_layer_neuron_num, _ in enumerate(range(nin))]
@@ -35,6 +35,8 @@ class Neuron(Module):
             out = z.leakyrelu()
         elif self.activ == 'sigmoid':
             out = z.sigmoid()
+        elif self.activ == 'none':
+            out = z
         else:
             raise ValueError(f"Unknown activation functions: {self.activ}")
         out.label = f"L{self.l+1}a{self.n}"
@@ -44,7 +46,7 @@ class Neuron(Module):
         return self.w + [self.b]
 
 class Layer(Module):
-    def __init__(self, nin, nout, layer_num, activ='tanh'): 
+    def __init__(self, nin, nout, layer_num, activ='leakyrelu'): 
         self.neurons = [Neuron(nin, layer_num, neuron_num, activ) for neuron_num, _ in enumerate(range(nout))]
 
     def __call__(self, x):
@@ -61,7 +63,7 @@ class Layer(Module):
         #return [p for n in self.neurons for p in n.parameters()]
 
 class MLP(Module):
-    def __init__(self, nin, nouts, activ='tanh'):
+    def __init__(self, nin, nouts, activ='leakyrelu'):
         sz = [nin] + nouts
         self.layers = [Layer(sz[i], sz[i+1], layer_num, activ) for layer_num, i in enumerate(range(len(nouts)))]
 

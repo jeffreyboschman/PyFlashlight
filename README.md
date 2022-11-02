@@ -39,9 +39,9 @@ helpers.draw_dot(z)
 (Note that if we do not call `z.backward()` in this second example, all node outlines are grey and their `grad` values are `0.0000`. This will be explained more in the following example.) 
 
 
-## Backpropagation Calculation and Visualization Example
+## Neural Network Backpropagation Calculation and Visualization Example
 
-With PyFlashlight, we can visualize the calculation of gradients and the updating of parameters with a neural network graph.
+With PyFlashlight, we can also visualize the calculation of gradients and the updating of parameters in a neural network.
 
 The following codeblocks (also found in `graph_examples.ipynb`) create a simple multi-layer perceptron (MLP) neural network with 1 input layer (2 neurons) and 1 output layer (1 neurons) for regression. The leaky ReLU activation function is applied on the output neurons, and then the loss is calculated using the mean squared error loss function (there is only one example and one output neuron, so it is actually just the squared error loss).
 
@@ -66,7 +66,7 @@ y_pred = mlp(x)
 loss = losses.mean_squared_error(y, y_pred)
 ```
 
-We can visualize the set of operations as a graph. The leaf nodes are usually parameters or inputs, and the intermediate nodes are the results of (and inputs to) intermediate operations. The root node at the far right is the loss. When the gradient of a node (w.r.t. the loss) is `0`, it has a grey outline (all of the graph nodes are initialized with gradients of `0` because we haven't calculated them yet). The nodes outlined with red are the parameters (i.e., weights and biases) whose data values will get updated during gradient descent. 
+Again, we can visualize the set of operations as a graph. For this simple MLP, the leaf nodes are usually parameters or inputs and the intermediate nodes are the results of (and inputs to) intermediate operations. The root node at the far right is the loss. When the gradient of the loss w.r.t. a node is `0`, the node has a grey outline (as alluded to in the second Simple Operations Example, all of the graph nodes are initialized with gradients of `0` because we haven't calculated them yet). The nodes outlined with red are the parameters (i.e., weights and biases) whose data values will get updated during gradient descent.
 
 ```  
 helpers.draw_dot(loss, mlp.parameters())
@@ -74,7 +74,7 @@ helpers.draw_dot(loss, mlp.parameters())
 
 ![alt text](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/mlp_no_grads.svg?raw=true)
 
-Next, we can perform backpropagation, which calculates the gradient of each node relative to the loss. It calculates the gradient of a node whether or not it is a parameter (i.e., a weight or bias) as gradients of all the intermediate nodes are necessary for calculating the parameter gradients. This is because each parameter influences the loss via a set of downstream operations during the forward pass, and therefore the gradients of these operations are needed to calculate the gradient of each parameter w.r.t. the loss during the backwards pass (using the chain rule of calculus).
+Next, we can perform backpropagation, which calculates the gradient of the loss relative to each node (sometimes casually referred to as just the "gradient of a node"). It calculates the gradient for a node whether or not it is a parameter (i.e., a weight or bias) as gradients of all the intermediate nodes are necessary for calculating the parameter gradients. This is because each parameter influences the loss via a set of downstream operations during the forward pass, and therefore the gradients of the loss w.r.t. these operations are needed to calculate the gradients of the loss w.r.t. each parameter during the backwards pass (using the chain rule of calculus).
 
 ```
 loss.backward()
@@ -83,7 +83,7 @@ helpers.draw_dot(loss, mlp.parameters())
 
 ![alt text](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/mlp_with_grads.svg?raw=true)
 
-Now, we can see that all the nodes have a gradient w.r.t. the loss calculated (and therefore, they have a black outline). Great! 
+Now, we can see that the gradient of the loss is calculated for all the nodes (and therefore, the nodes have a black outline). Great! 
 
 The next steps are to update the values of the parameters, zero the gradients, and then do the whole forward pass again. We can see how we can use PyFlashlight to train a larger neural network for multiple epochs in the following example.
 
@@ -91,9 +91,10 @@ The next steps are to update the values of the parameters, zero the gradients, a
 
 PyFlashlight can be used for training a simple neural network. 
 
-The notebook `training_examples.ipynb` has an example of training an MLP (2 input neurons, 16 neurons, 16 neurons, 1 output neuron) for binary classification of the `scikit-learn make_moons` dataset. It is trained using tanh activation functions, mean squared error loss, and classic gradient descent with a linearly decreasing learning rate for 50 epochs. The following gif demonstrates how the predicted background contour improves for more epochs.
+The notebook `training_examples.ipynb` has an example of training an MLP (2 input neurons, 16 neurons, 16 neurons, 1 output neuron) for binary classification of the `scikit-learn make_moons` dataset. It is trained using leaky ReLU activation functions for the intermediate layers, sigmoid on the last layer (which is a single neuron), binary cross entropy error loss, and classic gradient descent with a linearly decreasing learning rate for 40 epochs. The following gif demonstrates how the predicted background contour improves for more epochs.
 
 ![alt text](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/moons_training.gif?raw=true)
+
 
 ## Categorical Cross Entropy Loss Visualization Example
 
@@ -114,7 +115,7 @@ import random
 random.seed(42)
 ```
 ```
-mlp = nn.MLP(2, [3], activ='tanh')
+mlp = nn.MLP(2, [3], activ='none')
 
 x = [0.1, -0.5]
 x = Vector(x, label='x')
@@ -140,9 +141,9 @@ helpers.draw_dot(loss, mlp.parameters())
 
 ![alt text](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/mlp_cce_with_grads.svg?raw=true)
 
-After doing backpropagation, we can also see that most of the gradients of the operations during the softmax are `0`; these `0`-gradient operations are those that lead to the softmax outputs that are multiplied by the `0`'s of the one-hot encoded ground truth vector. Since these downstream gradients are `0`, they also do not influence the gradients of the output nodes before the softmax and the parameters leading into them. In other words, when using categorical cross entropy loss, the gradients of the parameters leading to the final nodes before the softmax only depend on the softmax output of the node multiplied by the `1` of the one-hot encoded ground truth vector. In other other words, *the gradients of the parameters leading to final nodes before the softmax only depend on how close the "correct" probability is, and not at all on how wrong the other probabilities are*. 
+After doing backpropagation, we can also see that most of the gradients of the operations during the softmax are `0` (still have grey outlines); these `0`-gradient operations are the ones that lead to the softmax outputs but that are multiplied by the `0`'s of the one-hot encoded ground truth vector. Since these downstream gradients are `0`, they also do not influence the gradients of the output nodes before the softmax and the parameters leading into them. In other words, when using categorical cross entropy loss, the gradients of the parameters leading to the final nodes before the softmax only depend on the softmax output of the node multiplied by the `1` of the one-hot encoded ground truth vector. In other, other words, **_the gradients of the parameters leading to final nodes before the softmax only depend on how close the "correct" probability is, and not at all on how wrong the other probabilities are_**. 
 
-However, all of this is *okay because the softmax operation means that making one component of the vector larger must shrink the sum of the remaining components by the same amount*. 
+However, all of this is **_okay because the softmax operation means that making one component of the vector larger must shrink the sum of the remaining components by the same amount_**. 
 
 Hopefully that all makes sense, and that visualizing this neural network graph helps other people understand categorical cross entropy loss the way that it helped me.
 
