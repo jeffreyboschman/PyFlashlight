@@ -1,7 +1,7 @@
 """
 Lightweight version of torch.nn; the basic building blocks of neural network graphs. 
 
-Heavily inspired by https://github.com/karpathy/micrograd/blob/master/micrograd/nn.py, but with a bit more functionality (e.g., extension to vectors) and a lot more documentation.
+Heavily inspired by https://github.com/karpathy/micrograd/blob/master/micrograd/nn.py, but with a bit more functionality (e.g., labels, multiple activation functions, etc) and a lot more documentation.
 """
 
 import random

@@ -5,7 +5,6 @@ Heavily inspired by https://github.com/karpathy/micrograd/blob/master/micrograd/
 """
 
 import math
-from this import d
 from typing import Union, Tuple, List, Set, Callable
 
 class Scalar:

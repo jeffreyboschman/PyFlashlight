@@ -5,7 +5,7 @@ Helper functions.
 from graphviz import Digraph
 
 def trace(root):
-    # builds a set of all nodes and edges in a graph
+    """ Builds a set of all nodes and edges in a graph."""
     nodes, edges = set(), set()
     def build(v):
         if v not in nodes:
@@ -17,9 +17,12 @@ def trace(root):
     return nodes, edges
 
 def draw_dot(root, parameters=[], format='svg', rankdir='LR'):
-    """
-    format: png | svg | ...
-    rankdir: TB (top to bottom graph) | LR (left to right)
+    """Draws a computation graph for the operations leading to root.
+    
+    root:       a Scalar object
+    parameters: a list of nodes which are parameters (i.e., nodes whose data we want to update during gradient descent)
+    format:     png | svg | ...
+    rankdir:    TB (top to bottom graph) | LR (left to right)
     """
     assert rankdir in ['LR', 'TB']
     nodes, edges = trace(root)
@@ -52,6 +55,7 @@ def draw_dot(root, parameters=[], format='svg', rankdir='LR'):
     return dot
 
 def softmax(layer):
+    """Computes softmax for a layer of neurons."""
     sums = sum(neuron.exp() for neuron in layer)
     out = [neuron.exp()/sums for neuron in layer]
     return out
