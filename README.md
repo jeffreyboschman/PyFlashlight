@@ -14,7 +14,8 @@ Below are a few examples of operations that are possible with PyFlashlight and a
 ```
 from pyflashlight.engine import Scalar
 import pyflashlight.helpers as helpers
-
+```
+```
 a = Scalar(-3.0, label='a')
 b = Scalar(2, label='b')
 c = 0.25*(a + b); c.label='c'
@@ -35,7 +36,8 @@ z = x**2 + y.log(); z.label = 'z'
 helpers.draw_dot(z)
 ```
 ![alt text](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/simple_graph_xyz.svg?raw=true)
-Note that if we do not call `z.backward()` in this second example, all nodes are grey and their `grad` value `0.0000`. 
+(Note that if we do not call `z.backward()` in this second example, all node outlines are grey and their `grad` values are `0.0000`. This will be explained more in the following example.) 
+
 
 ## Backpropagation Calculation and Visualization Example
 
