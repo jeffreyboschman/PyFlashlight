@@ -19,15 +19,26 @@ a = Scalar(-3.0, label='a')
 b = Scalar(2, label='b')
 c = 0.25*(a + b); c.label='c'
 d = (b * c).leakyrelu(); d.label='d'
-print(f'd = {d.data:.4f}') # the outcome of this forward pass
 
 d.backward()
-print(f'dd/da = {a.grad:.4f}') # the numerical value of dd/da
-print(f'dd/db = {b.grad:.4f}') # the numerical value of dd/db
-print(f'dd/dc = {c.grad:.4f}') # the numerical value of dd/dc
 helpers.draw_dot(d)
 ```
-![alt text](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/simple_graph.svg?raw=true)
+![alt text](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/simple_graph_abc.svg?raw=true)
+
+```
+from pyflashlight.engine import Vector
+import pyflashlight.helpers as helpers
+
+x = Scalar(0.2, label='x')
+x /= 3.0
+y = Scalar(0.35, label='y')
+y -= 0.12
+z = x**2 + y.log(); z.label = 'z'
+
+z.backward()
+helpers.draw_dot(z)
+```
+![alt text](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/simple_graph_xyz.svg?raw=true)
 
 ## Backpropagation Calculation and Visualization Example
 
