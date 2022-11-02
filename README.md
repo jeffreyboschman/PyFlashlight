@@ -73,6 +73,8 @@ helpers.draw_dot(loss, mlp.parameters())
 ```
 
 ![alt text](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/mlp_no_grads.svg?raw=true)
+(You can click on an image to view it larger.)
+
 
 Next, we can perform backpropagation, which calculates the gradient of the loss relative to each node (sometimes casually referred to as just the "gradient of a node"). It calculates the gradient for a node whether or not it is a parameter (i.e., a weight or bias) as gradients of all the intermediate nodes are necessary for calculating the parameter gradients. This is because each parameter influences the loss via a set of downstream operations during the forward pass, and therefore the gradients of the loss w.r.t. these operations are needed to calculate the gradients of the loss w.r.t. each parameter during the backwards pass (using the chain rule of calculus).
 
