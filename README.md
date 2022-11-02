@@ -9,7 +9,7 @@ Image created by text-to-image generator DALL-E (2022-10-09).
 
 ## Simple Operations Example
 
-Below are a few examples of operations that are possible with PyFlashlight and a visualization of them as a computation graph.
+Below are a few examples of operations that are possible with PyFlashlight and a visualization of them as a computation graphs.
 
 ```
 from pyflashlight.engine import Scalar
@@ -26,19 +26,16 @@ helpers.draw_dot(d)
 ![alt text](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/simple_graph_abc.svg?raw=true)
 
 ```
-from pyflashlight.engine import Vector
-import pyflashlight.helpers as helpers
-
 x = Scalar(0.2, label='x')
 x /= 3.0
 y = Scalar(0.35, label='y')
 y -= 0.12
 z = x**2 + y.log(); z.label = 'z'
 
-z.backward()
 helpers.draw_dot(z)
 ```
 ![alt text](https://github.com/jeffreyboschman/PyFlashlight/blob/main/images/simple_graph_xyz.svg?raw=true)
+Note that if we do not call `z.backward()` in this second example, all nodes are grey and their `grad` value `0.0000`. 
 
 ## Backpropagation Calculation and Visualization Example
 
